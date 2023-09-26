@@ -1,0 +1,12 @@
+{
+  "rabbit_version": "3.8.9",
+  "queues": [
+    {"name": "compra-realizada", "durable": true, "auto_delete": false, "arguments": {}}
+  ],
+  "exchanges": [
+    {"name": "seuExchangeName", "type": "direct", "durable": true, "auto_delete": false, "internal": false, "arguments": {}}
+  ],
+  "bindings": [
+    {"source": "seuExchangeName", "destination": "compra-realizada", "destination_type": "queue", "routing_key": "compra-realizada"}
+  ]
+}
