@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Compra</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            border-radius: 12px;
+        }
+        button:hover {
+            background-color: white;
+            color: black;
+            border: 1px solid #4CAF50;
+        }
+        #comprarAleatorio {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<button onclick="comprar('🍎', 'Maçã', 2.5)">🍎 Maçã - $2.50</button>
+<button onclick="comprar('🍌', 'Banana', 3.0)">🍌 Banana - $3.00</button>
+<button onclick="comprar('🍇', 'Uva', 5.0)">🍇 Uva - $5.00</button>
+<button onclick="comprar('🍓', 'Morango', 4.0)">🍓 Morango - $4.00</button>
+<button id="comprarAleatorio" onclick="comprarAleatoriamente()">Comprar Aleatoriamente</button>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var comprando = false;
+    var intervalId;
+
+    function comprarAleatoriamente() {
+        comprando = !comprando;
+        var botao = document.getElementById('comprarAleatorio');
+
+        if (comprando) {
+            botao.textContent = 'Parar';
+            intervalId = setInterval(comprarRandom, 100);
+        } else {
+            botao.textContent = 'Comprar Aleatoriamente';
+            clearInterval(intervalId);
+        }
+    }
+
+    function comprarRandom() {
+        var produtos = [
+            { emoji: '🍎', nome: 'Maçã', valor: 2.5 },
+            { emoji: '🍌', nome: 'Banana', valor: 3.0 },
+            { emoji: '🍇', nome: 'Uva', valor: 5.0 },
+            { emoji: '🍓', nome: 'Morango', valor: 4.0 }
+        ];
+
+        var produtoAleatorio = produtos[Math.floor(Math.random() * produtos.length)];
+        comprar(produtoAleatorio.emoji, produtoAleatorio.nome, produtoAleatorio.valor);
+    }
+
+    function comprar(emoji, nome, valor) {
+        var compra = {
+            nome: nome + ' ' + emoji,
+            valor: valor,
+            latitude: -23.5505199,
+            longitude: -46.6333094
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/compras', // Substitua com o seu endpoint
+            data: JSON.stringify(compra),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Compra criada com sucesso! ID: ' + data.id);
+            },
+            error: function(error) {
+                console.error('Erro ao criar compra! ' + error.responseText);
+            }
+        });
+    }
+</script>
+</body>
+</html>

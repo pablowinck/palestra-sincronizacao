@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Compras</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        table {
+            width: 75%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 18px;
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        h2 {
+            font-size: 30px;
+            color: #333;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<h2 id="titulo">Fatura do Cartão $0.00</h2>
+<table id="lista-compras">
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Valor</th>
+        <th>Endereço</th>
+        <th>Data/Hora</th>
+    </tr>
+    </thead>
+    <tbody id="corpo-tabela">
+    </tbody>
+</table>
+
+<script>
+    var socket = new WebSocket('ws://localhost:8080/compra-realizada');
+
+    socket.onmessage = function(event) {
+        var compra = JSON.parse(event.data);
+        var titulo = document.getElementById('titulo');
+        var beforeValorTotal = titulo.textContent.split('$')[1];
+        var valorTotal = parseFloat(beforeValorTotal) + parseFloat(compra.valor);
+        titulo.textContent = `Fatura do Cartão $${valorTotal.toFixed(2)}`;
+        var corpoTabela = document.getElementById('corpo-tabela');
+        var tr = document.createElement('tr');
+        var tdNome = document.createElement('td');
+        var tdValor = document.createElement('td');
+        var tdEndereco = document.createElement('td');
+        var tdHora = document.createElement('td');
+
+        tdNome.appendChild(document.createTextNode(compra.nome));
+        tdValor.appendChild(document.createTextNode('$' + compra.valor));
+        tdEndereco.appendChild(document.createTextNode(compra.endereco));
+        var data = new Date();
+        var dia = data.getDate().toString().padStart(2, '0');
+        var mes = (data.getMonth() + 1).toString().padStart(2, '0');
+        var hora = data.getHours().toString().padStart(2, '0');
+        var minuto = data.getMinutes().toString().padStart(2, '0');
+        var segundo = data.getSeconds().toString().padStart(2, '0');
+        var horaFormatada = `${dia}/${mes} ${hora}:${minuto}:${segundo}`;
+        tdHora.append(document.createTextNode(horaFormatada));
+
+        tr.appendChild(tdNome);
+        tr.appendChild(tdValor);
+        tr.appendChild(tdEndereco);
+        tr.appendChild(tdHora);
+
+        // Inserindo a nova linha no início do corpo da tabela
+        corpoTabela.insertBefore(tr, corpoTabela.firstChild);
+        if(corpoTabela.rows.length > 10) {
+            corpoTabela.deleteRow(corpoTabela.rows.length - 1);
+        }
+    };
+
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+            alert(`[close] Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+        } else {
+            alert('[close] Connection died');
+        }
+    };
+
+    socket.onerror = function(error) {
+        alert(`[error] ${error.message}`);
+    };
+</script>
+</body>
+</html>
