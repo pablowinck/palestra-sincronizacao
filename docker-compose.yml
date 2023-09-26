@@ -13,15 +13,13 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-#    expose:
-#      - "8080"
     ports:
       - "8080:8080"
     deploy:
       resources:
         limits:
           cpus: "0.25"
-          memory: 300M
+          memory: 100M
   api2:
     image: pablowinck/palestra-sincronizacao:1.0
     environment:
@@ -34,19 +32,17 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-    #    expose:
-    #      - "8080"
     ports:
       - "8081:8081"
     deploy:
       resources:
         limits:
           cpus: "0.25"
-          memory: 300M
+          memory: 100M
   mysql:
     image: mysql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
     environment:
@@ -54,6 +50,11 @@ services:
       MYSQL_DATABASE: compras
     ports:
       - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
 
   mongodb:
     image: mongo
@@ -63,4 +64,9 @@ services:
       retries: 10
     ports:
       - "27017:27017"
+    deploy:
+        resources:
+            limits:
+              cpus: "0.5"
+              memory: 500M
 
