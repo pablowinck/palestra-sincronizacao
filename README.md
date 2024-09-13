@@ -2,6 +2,8 @@
 
 Este projeto foi desenvolvido para ministrar uma palestra no **Caqui Inova** de Mogi das Cruzes, com o tema **sincronização de dados**. O objetivo é demonstrar conceitos práticos de sincronização e enriquecimento de dados utilizando uma arquitetura moderna com várias tecnologias integradas.
 
+![palestra-sincronizacao](https://github.com/user-attachments/assets/6f3d9584-2fab-46bb-8271-063d75368997)
+
 ## Lógica Geral
 
 ### Bases de Dados
